@@ -12,7 +12,6 @@ A beautiful and intuitive weather application built with React Native and Expo, 
 - 📅 5-day weather forecast
 - 📍 Search for weather by city name
 - 🔄 Pull-to-refresh functionality
-- 🌓 Dark/Light mode support
 - 📊 Detailed weather metrics (humidity, wind speed, etc.)
 - 🚀 Built with Expo and TypeScript
 
