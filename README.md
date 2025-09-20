@@ -1,50 +1,141 @@
-# Welcome to your Expo app 👋
+# ABWeather 🌦️
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A beautiful and intuitive weather application built with React Native and Expo, providing real-time weather forecasts and detailed weather information for locations worldwide.
 
-## Get started
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Olixfills/gray-invent-weather-test/blob/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Olixfills/gray-invent-weather-test.svg?style=social)](https://github.com/Olixfills/gray-invent-weather-test/stargazers)
 
-1. Install dependencies
+## Features ✨
 
+- 🌍 Real-time weather data for any location
+- 📱 Beautiful and responsive UI with smooth animations
+- 📅 5-day weather forecast
+- 📍 Search for weather by city name
+- 🔄 Pull-to-refresh functionality
+- 🌓 Dark/Light mode support
+- 📊 Detailed weather metrics (humidity, wind speed, etc.)
+- 🚀 Built with Expo and TypeScript
+
+## Screenshots 📸
+
+*Screenshots will be added soon*
+
+## Prerequisites 📋
+
+- Node.js 16+ and npm/yarn
+- Expo CLI (`npm install -g expo-cli`)
+- iOS Simulator or Android Emulator (for local development)
+- [OpenWeatherMap API Key](https://openweathermap.org/api) (free tier is sufficient)
+
+## Installation 🛠️
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Olixfills/gray-invent-weather-test.git
+   cd gray-invent-weather-test
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
+   # or
+   yarn install
    ```
 
-2. Start the app
-
-   ```bash
-   npx expo start
+3. **Set up environment variables**
+   Create a `.env` file in the root directory and add your OpenWeatherMap API key:
+   ```env
+   EXPO_PUBLIC_OPEN_WEATHER_API_KEY=your_api_key_here
+   EXPO_PUBLIC_BASE_URL=https://api.openweathermap.org/data/2.5
+   EXPO_PUBLIC_GEO_API_URL=https://api.openweathermap.org/geo/1.0/direct
    ```
 
-In the output, you'll find options to open the app in a
+## Running the App 🚀
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Development
 
 ```bash
-npm run reset-project
+# Start the development server
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This will open the Metro bundler. You can then:
+- Press `i` to run on iOS Simulator
+- Press `a` to run on Android Emulator
+- Scan the QR code with Expo Go app on your physical device
 
-## Learn more
+### Building for Production
 
-To learn more about developing your project with Expo, look at the following resources:
+#### Android
+```bash
+# Build APK
+npx expo prebuild
+npx expo run:android
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Or build an APK without installing
+npx expo build:android -t apk
+```
 
-## Join the community
+#### iOS
+```bash
+# Build for iOS
+npx expo prebuild
+npx expo run:ios
 
-Join our community of developers creating universal apps.
+# Or build an IPA
+npx expo build:ios
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Project Structure 📂
+
+```
+ABWeather/
+├── app/                  # Main application code
+│   ├── _layout.tsx       # Root layout component
+│   ├── index.tsx         # Main entry point
+│   ├── onboarding.tsx    # Onboarding screens
+│   └── weather.tsx       # Main weather screen
+├── assets/               # Static assets (images, icons, etc.)
+├── components/           # Reusable UI components
+│   ├── ui/               # Base UI components
+│   └── weather/          # Weather-specific components
+├── constants/            # Constants and configuration
+├── hooks/                # Custom React hooks
+└── types/                # TypeScript type definitions
+```
+
+## Technologies Used 🛠
+
+- [Expo](https://expo.dev/) - Cross-platform app development
+- [React Native](https://reactnative.dev/) - Mobile app framework
+- [TypeScript](https://www.typescriptlang.org/) - Type checking
+- [OpenWeatherMap API](https://openweathermap.org/api) - Weather data
+- [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/) - Device location
+- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) - Smooth animations
+
+## Contributing 🤝
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License 📄
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments 🙏
+
+- [OpenWeatherMap](https://openweathermap.org/) for the weather data API
+- [Expo](https://expo.dev/) for the amazing development experience
+- All contributors and users of the app
+
+---
+
+Made with ❤️ by [Olayiwola Abraham Oni](https://github.com/Olixfills) - Feel free to contact me!
+
+[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2FOlixfills)](https://twitter.com/Olixfills)
+[![GitHub followers](https://img.shields.io/github/followers/Olixfills?style=social)](https://github.com/Olixfills)
