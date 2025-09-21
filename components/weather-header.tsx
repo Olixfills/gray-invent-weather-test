@@ -109,7 +109,11 @@ const WeatherHeader = ({
         </Text>
       </View>
 
-      <TouchableOpacity onPress={onPressSearch} activeOpacity={0.8}>
+      <TouchableOpacity
+        onPress={onPressSearch}
+        activeOpacity={0.8}
+        style={tw`p-2`}
+      >
         <Search size={24} color="#fff" />
       </TouchableOpacity>
     </View>

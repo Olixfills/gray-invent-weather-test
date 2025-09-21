@@ -5,13 +5,10 @@ import Button from "@/components/Button";
 import { ForecastCard } from "@/components/ui/cards/forecast-card";
 import { WeatherDetailsCard } from "@/components/ui/cards/weather-details-card";
 import WeatherHeader from "@/components/weather-header";
-import {
-  checkLocationEnabled,
-  requestLocationPermission,
-} from "@/constants/location";
 import { processForecastData } from "@/constants/weather helpers";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ForecastList, LocationData, WeatherData } from "@/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import { Droplets, Haze, MapPin, Search, Wind, X } from "lucide-react-native";
@@ -31,15 +28,25 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "twrnc";
+import Geolocation from "@react-native-community/geolocation";
+
+Geolocation.setRNConfiguration({
+  skipPermissionRequests: false,
+  authorizationLevel: "always",
+  enableBackgroundLocationUpdates: true,
+  locationProvider: "playServices",
+});
 
 const OPENWEATHER_API_KEY = process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY;
 const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 const GEO_API_URL = process.env.EXPO_PUBLIC_GEO_API_URL;
 
+// Storage key for cached location
+const CACHED_LOCATION_KEY = "cached_user_location";
+
 const WeatherScreen = () => {
   const searchSheetRef = useRef<AppBottomSheetRef>(null);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-
   const [currentLocation, setCurrentLocation] = useState<LocationData | null>(
     null
   );
@@ -62,49 +69,121 @@ const WeatherScreen = () => {
     getCurrentLocationWeather();
   }, []);
 
-  const getCurrentLocationWeather = async () => {
+  // Save location to AsyncStorage
+  const saveLocationToStorage = async (location: LocationData) => {
+    try {
+      await AsyncStorage.setItem(CACHED_LOCATION_KEY, JSON.stringify(location));
+      console.log("Location saved to storage:", location);
+    } catch (error) {
+      console.error("Error saving location to storage:", error);
+    }
+  };
+
+  // Get cached location from AsyncStorage
+  const getCachedLocation = async (): Promise<LocationData | null> => {
+    try {
+      const cachedLocationString = await AsyncStorage.getItem(
+        CACHED_LOCATION_KEY
+      );
+      if (cachedLocationString) {
+        const cachedLocation = JSON.parse(cachedLocationString);
+        console.log("Retrieved cached location:", cachedLocation);
+        return cachedLocation;
+      }
+    } catch (error) {
+      console.error("Error getting cached location:", error);
+    }
+    return null;
+  };
+
+  const getCurrentLocationWeather = async (forceRefresh: boolean = false) => {
     try {
       setLoading(true);
 
-      // Check if location services are enabled
-      const locationEnabled = await checkLocationEnabled();
-      if (!locationEnabled) {
-        setLoading(false);
+      let locationData: LocationData | null = null;
+      let useCache = false;
+
+      // Try to get fresh location first (unless we're just refreshing and already have a current location)
+      if (!forceRefresh || !currentLocation) {
+        try {
+          // Request location permission
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") {
+            console.log(
+              "Location permission denied, trying cached location..."
+            );
+            locationData = await getCachedLocation();
+            useCache = true;
+          } else {
+            // Get current location
+            // const location = await Location.getCurrentPositionAsync({
+            //   accuracy: Location.Accuracy.High,
+            //   timeout: 10000, // 10 second timeout
+            // });
+            // const { latitude, longitude } = location.coords;
+
+            Geolocation.getCurrentPosition(
+              async (pos) => {
+                const { latitude, longitude } = pos.coords;
+                // Get location name from coordinates
+                const reverseGeocode = await Location.reverseGeocodeAsync({
+                  latitude,
+                  longitude,
+                });
+
+                if (reverseGeocode.length > 0) {
+                  const place = reverseGeocode[0];
+                  locationData = {
+                    name: place.city || place.district || "Current Location",
+                    country: place.isoCountryCode || "Unknown",
+                    lat: latitude,
+                    lon: longitude,
+                  };
+
+                  // Save this fresh location to storage
+                  await saveLocationToStorage(locationData);
+                }
+              },
+              (error) =>
+                Alert.alert("GetCurrentPosition Error", JSON.stringify(error)),
+              { enableHighAccuracy: true }
+            );
+          }
+        } catch (locationError) {
+          console.log("Error getting fresh location:", locationError);
+          // If getting fresh location fails, try cached location
+          locationData = await getCachedLocation();
+          useCache = true;
+        }
+      } else {
+        // If we're just refreshing and already have current location, use it
+        locationData = currentLocation;
+      }
+
+      if (!locationData) {
+        Alert.alert(
+          "Location Error",
+          "Unable to get your location. Please check your location settings and try again, or search for a city manually."
+        );
         return;
       }
 
-      // Request location permission using our utility
-      const { granted } = await requestLocationPermission();
-      if (!granted) {
-        setLoading(false);
-        return;
-      }
+      setCurrentLocation(locationData);
 
-      // Get current location
-      const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
-
-      // Get location name from coordinates
-      const reverseGeocode = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-
-      if (reverseGeocode.length > 0) {
-        const place = reverseGeocode[0];
-        setCurrentLocation({
-          name: place.city || place.district || "Unknown",
-          country: place.isoCountryCode || "Unknown",
-          lat: latitude,
-          lon: longitude,
-        });
+      // Show user if we're using cached location
+      if (useCache) {
+        Alert.alert(
+          "Using Cached Location",
+          `Using your previously saved location: ${locationData.name}. Location services may not be available.`,
+          [{ text: "OK" }]
+        );
       }
 
       // Fetch weather data
-      await fetchWeatherData(latitude, longitude);
-      await fetchForecastData(latitude, longitude);
+      await fetchWeatherData(locationData.lat, locationData.lon);
+      await fetchForecastData(locationData.lat, locationData.lon);
     } catch (error) {
-      console.log("Error getting location:", error);
+      console.log("Error in getCurrentLocationWeather:", error);
       Alert.alert("Error", "Failed to get current location weather data.");
     } finally {
       setLoading(false);
@@ -186,6 +265,7 @@ const WeatherScreen = () => {
   };
 
   const debouncedSearch = debounce(searchLocations, 500);
+
   const handleLocationSelect = async (location: LocationData) => {
     try {
       setLoading(true);
@@ -215,6 +295,16 @@ const WeatherScreen = () => {
       Alert.alert("Error", "Failed to refresh weather data.");
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  // Clear cached location (for debugging/testing purposes)
+  const clearCachedLocation = async () => {
+    try {
+      await AsyncStorage.removeItem(CACHED_LOCATION_KEY);
+      console.log("Cached location cleared");
+    } catch (error) {
+      console.error("Error clearing cached location:", error);
     }
   };
 
@@ -394,7 +484,7 @@ const WeatherScreen = () => {
             </View>
 
             {/* Current Location Button */}
-            <Button onPress={getCurrentLocationWeather}>
+            <Button onPress={() => getCurrentLocationWeather(false)}>
               <View style={tw`flex-row items-center justify-center `}>
                 <MapPin size={20} color="#fff" style={tw`mr-2`} />
                 <Text style={tw`text-white font-medium`}>
@@ -403,9 +493,7 @@ const WeatherScreen = () => {
               </View>
             </Button>
           </AppBottomSheet>
-          <Text
-            style={tw`text-center text-gray-500 py-4 absolute bottom-0 left-0 right-0`}
-          >
+          <Text style={tw`text-center text-gray-500 py-4`}>
             Gray Invent Test ©2025
           </Text>
         </SafeAreaView>
