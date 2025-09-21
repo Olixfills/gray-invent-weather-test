@@ -1,6 +1,6 @@
 # ABWeather 🌦️
 
-A beautiful and intuitive weather application built with React Native and Expo, providing real-time weather forecasts and detailed weather information for locations worldwide.
+A beautiful and intuitive weather application built with React Native, Expo, and TypeScript, providing real-time weather forecasts and detailed weather information for locations worldwide.
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Olixfills/gray-invent-weather-test/blob/master/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Olixfills/gray-invent-weather-test.svg?style=social)](https://github.com/Olixfills/gray-invent-weather-test/stargazers)
@@ -12,8 +12,10 @@ A beautiful and intuitive weather application built with React Native and Expo, 
 - 📅 5-day weather forecast
 - 📍 Search for weather by city name
 - 🔄 Pull-to-refresh functionality
-- 📊 Detailed weather metrics (humidity, wind speed, etc.)
-- 🚀 Built with Expo and TypeScript
+- 📊 Detailed weather metrics (humidity, wind speed, feels like, etc.)
+- 🚀 Built with Expo, TypeScript, and React Native Reanimated
+- 📱 Cross-platform (iOS & Android)
+- 🎨 Beautifully designed UI components
 
 ## Screenshots 📸
 
@@ -21,9 +23,9 @@ A beautiful and intuitive weather application built with React Native and Expo, 
 
 ## Prerequisites 📋
 
-- Node.js 16+ and npm/yarn
+- Node.js 16+ and npm/yarn/pnpm
 - Expo CLI (`npm install -g expo-cli`)
-- iOS Simulator or Android Emulator (for local development)
+- iOS Simulator, Android Emulator, or physical device with Expo Go
 - [OpenWeatherMap API Key](https://openweathermap.org/api) (free tier is sufficient)
 
 ## Installation 🛠️
@@ -36,6 +38,8 @@ A beautiful and intuitive weather application built with React Native and Expo, 
 
 2. **Install dependencies**
    ```bash
+   pnpm install
+   # or
    npm install
    # or
    yarn install
@@ -51,66 +55,46 @@ A beautiful and intuitive weather application built with React Native and Expo, 
 
 ## Running the App 🚀
 
-### Development
+1. **Start the development server**
+   ```bash
+   pnpm start
+   # or
+   npm start
+   # or
+   yarn start
+   ```
 
-```bash
-# Start the development server
-npx expo start
-```
+2. **Run on iOS/Android**
+   - Press `i` for iOS or `a` for Android in the terminal
+   - Or scan the QR code with your device's camera (Expo Go app required)
 
-This will open the Metro bundler. You can then:
-- Press `i` to run on iOS Simulator
-- Press `a` to run on Android Emulator
-- Scan the QR code with Expo Go app on your physical device
-
-### Building for Production
-
-#### Android
-```bash
-# Build APK
-npx expo prebuild
-npx expo run:android
-
-# Or build an APK without installing
-npx expo build:android -t apk
-```
-
-#### iOS
-```bash
-# Build for iOS
-npx expo prebuild
-npx expo run:ios
-
-# Or build an IPA
-npx expo build:ios
-```
-
-## Project Structure 📂
+## Project Structure 🏗️
 
 ```
 ABWeather/
-├── app/                  # Main application code
+├── app/                  # App screens and navigation
 │   ├── _layout.tsx       # Root layout component
 │   ├── index.tsx         # Main entry point
 │   ├── onboarding.tsx    # Onboarding screens
 │   └── weather.tsx       # Main weather screen
 ├── assets/               # Static assets (images, icons, etc.)
 ├── components/           # Reusable UI components
-│   ├── ui/               # Base UI components
-│   └── weather/          # Weather-specific components
-├── constants/            # Constants and configuration
+│   └── ui/               # Styled UI components
+├── constants/            # App constants and theme
 ├── hooks/                # Custom React hooks
 └── types/                # TypeScript type definitions
 ```
 
 ## Technologies Used 🛠
 
-- [Expo](https://expo.dev/) - Cross-platform app development
-- [React Native](https://reactnative.dev/) - Mobile app framework
+- [Expo](https://expo.dev/) - React Native framework
 - [TypeScript](https://www.typescriptlang.org/) - Type checking
 - [OpenWeatherMap API](https://openweathermap.org/api) - Weather data
 - [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/) - Device location
 - [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) - Smooth animations
+- [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/) - Device location services
+- [Expo Font](https://docs.expo.dev/versions/latest/sdk/font/) - Custom fonts
+- [Expo Status Bar](https://docs.expo.dev/versions/latest/sdk/status-bar/) - Status bar customization
 
 ## Contributing 🤝
 
